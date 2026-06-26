@@ -1,0 +1,2 @@
+def snake():
+    print("hisssssssss..!!")

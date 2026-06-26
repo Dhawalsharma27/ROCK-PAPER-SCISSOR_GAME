@@ -18,7 +18,7 @@ def get_choices():
 def check_win(player, computer):
     # instead of using print("You chose: " + player + "and Computer chose" + computer) to print the choices of player and computer we will use f string to make it more readable and easy to understand
     # using f string we can directly insert the variables player and computer in the string without using + operator to concatenate the strings.
-    print(f"your choice is {player} and computer choice is {computer}")
+    print(f"Your choice is {player} and Computer choice is {computer}")
     #now we will use if else statements to check the winner of the game
     if player == computer:
         return "Its a tie!"
