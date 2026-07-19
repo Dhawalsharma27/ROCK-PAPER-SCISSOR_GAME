@@ -68,16 +68,18 @@ class Hand:
 
     def calculate_value(self): #this will calculate the value of the hand and return the value.
         self.value = 0
+        aceCount = 0
         has_ace = False #this will check if the hand has an ace or not
         for card in self.cards:
             card_value = int(card.rank["value"]) #this will get the value of the card from the rank dictionary and convert it to integer
             self.value += card_value #this will add the value of the card to the value of the hand 
             if card.rank["rank"] == "A":#this wiill check if the card is an ace or not
+                aceCount  += 1 #this will count the number of aces in the hand
                 has_ace = True
 
-        if has_ace and self.value > 21:
+        while aceCount > 0 and self.value > 21:
             self.value -= 10 #this will subtract 10 from the value of the hand if the hand has an ace and the value is greater than 21 
-
+            aceCount -= 1 #this will decrement the aceCount by 1
     def get_value(self): 
         self.calculate_value()
         return self.value #this will return the value of the hand
@@ -141,16 +143,22 @@ class Game:
                 continue
 
             choice = ""
-            while player_hand.get_value() < 21 and choice not in ["s" , "stand"]:
+            # Loop strictly based on the player's alive score state
+            while player_hand.get_value() < 21:
                 choice = input("Please choose 'Hit' or 'Stand' : ").lower()
                 print()
+
                 while choice not in ["h" , "hit" , "s" , "stand"]:
                     choice = input("Please enter 'Hit' or 'Stand' (or H/S) : ").lower()
                     print()
 
-                    if choice in ["hit" , "h"]:
-                        player_hand.add_cards(deck.dealer(1)) 
-                        player_hand.display()
+                # Operational break to instantly drop out of the turn phase
+                if choice in ["stand", "s"]:
+                    break
+
+                if choice in ["hit" , "h"]:
+                    player_hand.add_cards(deck.dealer(1)) 
+                    player_hand.display()
 
             if self.check_winner(player_hand, dealer_hand):
                 continue
@@ -159,8 +167,9 @@ class Game:
             dealer_hand_value = dealer_hand.get_value()
 
             while dealer_hand_value < 17:
+
                 dealer_hand.add_cards(deck.dealer(1))
-                dealer_hand_value = int (dealer_hand_value.get_value())
+                dealer_hand_value = dealer_hand.get_value()
 
             dealer_hand.display(show_all_dealer_cards = True)
 
@@ -189,10 +198,10 @@ class Game:
                 print("Its a Tie !")
                 return True
             elif player_hand.is_blackjack():
-                print("You hace BlackJack. You win! ")
+                print("You have BlackJack. You win! ")
                 return True
             elif dealer_hand.is_blackjack():
-                print("Dealer hace BlackJack. Dealer win! ")
+                print("Dealer has BlackJack. Dealer win! ")
                 return True
                 
         else:
